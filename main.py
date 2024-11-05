@@ -14,16 +14,17 @@ def generate_script_gemini(task_description):
     return response.text
 
 token = "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"
-# t = "create a folder named 'pristine' on the user's Desktop"
-# print(generate_script_gemini(t))
 
-def create_github_repo(repo_name, token):
+
+def create_github_repo(repo_name, token,description = "A New Repository"):
     url = "https://api.github.com/user/repos"
     headers = {"Authorization": f"token {token}"}
-    data = {"name": repo_name, "private": True}
+    data = {"name": repo_name,"description": description, "private": True}
     response = requests.post(url, json=data, headers=headers)
-    return response.json()
+    if response.status_code == 201:
+        print(f"Repository '{repo_name}' created successfully.")
+    else:
+        print(f"Error: {response.json()}")
 
-create_github_repo("hello",token)
+# create_github_repo("hello",token)
 
-# git clone https://github.com/pranavsinghpatil/LLM-Agent.git
