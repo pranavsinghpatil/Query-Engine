@@ -1,7 +1,9 @@
 # api - AIzaSyAYqEVojzmSLv101fVPvEzDHLhpuR7SYso
 import requests
 import os
-# Import the Python SDK
+import docker
+import boto3
+from botocore.exceptions import ClientError
 import google.generativeai as genai
 genai.configure(api_key="AIzaSyAYqEVojzmSLv101fVPvEzDHLhpuR7SYso")
 
@@ -26,5 +28,17 @@ def create_github_repo(repo_name, token,description = "A New Repository"):
     else:
         print(f"Error: {response.json()}")
 
-# create_github_repo("hello",token)
+create_github_repo("pranav-sample",token)
 
+client = docker.from_env()
+
+def build_and_run_docker(image_name, dockerfile_path="."):
+    # Build the image
+    print("Building Docker image...")
+    client.images.build(path=dockerfile_path, tag=image_name)
+
+    # Run a container
+    print(f"Running Docker container from image '{image_name}'...")
+    container = client.containers.run(image_name, detach=True)
+    print(f"Container {container.short_id} is running.")
+    return container
