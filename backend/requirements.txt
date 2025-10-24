@@ -1,1 +1,1 @@
-rapidfuzz
+RapidFuzz==3.14.1
