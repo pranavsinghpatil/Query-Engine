@@ -1,1 +1,11 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+sentence-transformers
+numpy
+pypdf
+python-docx
+aiofiles
+python-multipart
 RapidFuzz==3.14.1

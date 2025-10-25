@@ -1,34 +1,37 @@
-from rapidfuzz import process, fuzz
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
 
 class NLMapper:
     def __init__(self, schema: dict):
         self.schema = schema
+        self.model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
-        self.synonyms = {
-            "name": ["full_name", "employee_name", "name"],
-            "salary": ["compensation", "pay", "annual_salary"],
-            "department": ["dept", "division", "department"],
-            "role": ["position", "title", "role"]
+    def map_natural_language_to_schema(self, query: str) -> dict:
+        """
+        Map user's natural language to actual database structure using semantic similarity.
+        """
+        query_embedding = self.model.encode([query])
+
+        best_match = {
+            "table": None,
+            "column": None,
+            "score": 0
         }
 
-    def best_match(self, keyword: str, table: str):
-        columns = self.schema.get(table, [])
-        
-        # direct and fuzzy match on synonyms
-        possible_cols = []
-        for key, syns in self.synonyms.items():
-            if keyword.lower() == key.lower():
-                possible_cols.extend(syns)
-        
-        # fallback to raw keywords
-        possible_cols.append(keyword)
+        for table_name, table_info in self.schema["tables"].items():
+            for column_info in table_info["columns"]:
+                column_embedding = column_info["semantic_embedding"]
+                similarity = cosine_similarity(query_embedding, [column_embedding])[0][0]
 
-        match, score = process.extractOne(
-            possible_cols[0],
-            columns,
-            scorer=fuzz.partial_ratio
-        )
+                if similarity > best_match["score"]:
+                    best_match["table"] = table_name
+                    best_match["column"] = column_info["name"]
+                    best_match["score"] = similarity
 
-        if score > 60:
-            return match
-        return None
+        return {
+            "query": query,
+            "mapped_table": best_match["table"],
+            "mapped_column": best_match["column"],
+            "similarity_score": float(best_match["score"])
+        }
