@@ -1,0 +1,108 @@
+.query-panel {
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  margin: 20px 0;
+  background-color: var(--background-color);
+  position: relative;
+  transition: background-color var(--transition-speed) ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+.query-panel h2 {
+    margin-top: 0;
+}
+
+.query-panel input[type="text"] {
+  width: 80%;
+  padding: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+}
+
+.query-panel input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.query-panel button {
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color var(--transition-speed) ease;
+}
+
+.query-panel button:hover {
+    background-color: #0056b3;
+}
+
+.suggestions-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--border-color);
+  position: absolute;
+  background: var(--background-color);
+  z-index: 1000;
+  width: 80%;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.suggestions-list li {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+.suggestions-list li:last-child {
+    border-bottom: none;
+}
+
+.suggestions-list li:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.history-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.history-content {
+    display: none;
+    position: absolute;
+    background-color: var(--background-color);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+}
+
+.history-content p {
+    color: var(--text-color);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+    margin: 0;
+}
+
+.history-content p:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.history-dropdown:hover .history-content {
+    display: block;
+}

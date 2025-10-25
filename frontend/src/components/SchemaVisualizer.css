@@ -1,0 +1,30 @@
+.schema-visualizer {
+  margin-top: 20px;
+}
+
+.tree-view {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.tree-view details {
+  margin-bottom: 10px;
+}
+
+.tree-view summary {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.tree-view ul {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+.tree-view li {
+  margin-top: 5px;
+}
+
+.col-type {
+  color: #6c757d;
+}

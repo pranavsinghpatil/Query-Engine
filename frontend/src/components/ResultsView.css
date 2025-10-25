@@ -1,0 +1,122 @@
+.results-view {
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  margin: 20px 0;
+  background-color: var(--background-color);
+  transition: background-color var(--transition-speed) ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+.results-view h2 {
+    margin-top: 0;
+}
+
+.cached-result {
+  color: var(--primary-color);
+  font-style: italic;
+}
+
+.table-container {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  border-bottom: 2px solid var(--border-color);
+  padding: 10px;
+  background: var(--background-color);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+thead th:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+tbody td {
+  border-bottom: 1px solid var(--border-color);
+  padding: 10px;
+  text-align: left;
+}
+
+tbody tr:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.pagination button {
+  padding: 8px 15px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color var(--transition-speed) ease;
+}
+
+.pagination button:hover {
+    background-color: #0056b3;
+}
+
+.pagination button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.export-buttons {
+    margin-top: 10px;
+}
+
+.export-buttons button {
+  padding: 8px 15px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color var(--transition-speed) ease;
+  margin-left: 10px;
+}
+
+.export-buttons button:hover {
+    background-color: #0056b3;
+}
+
+.document-results {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 20px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 20px;
+}
+
+.document-result {
+  border: 1px solid var(--border-color);
+  padding: 10px;
+  margin-bottom: 10px;
+  text-align: left;
+  transition: background-color var(--transition-speed) ease;
+  border-radius: 5px;
+}
+
+.document-result:hover {
+    background-color: var(--primary-color);
+    color: white;
+}

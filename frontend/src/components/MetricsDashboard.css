@@ -1,0 +1,47 @@
+.metrics-dashboard {
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  margin: 20px 0;
+  background-color: var(--background-color);
+  transition: background-color var(--transition-speed) ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+.metrics-dashboard h2 {
+    margin-top: 0;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+.metric-card {
+    background-color: var(--secondary-color);
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    color: var(--text-color);
+    transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+.metric-card h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.metric-card p {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.connected {
+    color: #28a745;
+}
+
+.disconnected {
+    color: #dc3545;
+}
