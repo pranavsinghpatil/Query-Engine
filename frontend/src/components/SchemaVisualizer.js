@@ -3,25 +3,30 @@ import './SchemaVisualizer.css';
 
 function SchemaVisualizer({ schema }) {
   if (!schema) {
-    return null;
+    return (
+      <div className="schema-section">
+        <div className="empty-state">
+          Connect to a database to see the discovered schema
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="schema-visualizer">
+    <div className="schema-section">
       <h3>Discovered Schema</h3>
-      <ul className="tree-view">
+      <ul className="schema-view">
         {Object.keys(schema.tables).map((tableName) => (
           <li key={tableName}>
-            <details>
-              <summary>{tableName}</summary>
-              <ul>
-                {schema.tables[tableName].columns.map((col) => (
-                  <li key={`${tableName}-${col.name}`}>
-                    <span title={`Column Name: ${col.name}\nData Type: ${col.type}`}>{col.name} - <span className="col-type">{col.type}</span></span>
-                  </li>
-                ))}
-              </ul>
-            </details>
+            <div className="table-name">{tableName}</div>
+            <ul className="columns-list">
+              {schema.tables[tableName].columns.map((col) => (
+                <li key={`${tableName}-${col.name}`}>
+                  <span className="col-name">{col.name}</span>
+                  <span className="col-type">{col.type}</span>
+                </li>
+              ))}
+            </ul>
           </li>
         ))}
       </ul>

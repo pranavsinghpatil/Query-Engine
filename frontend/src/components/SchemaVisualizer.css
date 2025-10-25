@@ -1,5 +1,11 @@
 .schema-visualizer {
-  margin-top: 20px;
+  position: relative;
+  border: var(--container-border);
+  box-shadow: var(--container-shadow);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  background: var(--surface-color);
+  transition: all var(--transition-smooth);
 }
 
 .tree-view {

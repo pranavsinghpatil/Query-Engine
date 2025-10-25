@@ -1,47 +1,189 @@
 .metrics-dashboard {
-  border: 1px solid var(--border-color);
-  padding: 20px;
-  margin: 20px 0;
-  background-color: var(--background-color);
-  transition: background-color var(--transition-speed) ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
+  position: relative;
+  border: var(--container-border);
+  box-shadow: var(--container-shadow);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  background: var(--surface-color);
+  transition: all var(--transition-smooth);
 }
 
 .metrics-dashboard h2 {
-    margin-top: 0;
+  margin: 0 0 1.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.metrics-dashboard h2::before {
+  content: "📈";
+  font-size: 1.25rem;
 }
 
 .metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
 }
 
 .metric-card {
-    background-color: var(--secondary-color);
-    padding: 20px;
-    border-radius: 5px;
-    text-align: center;
-    color: var(--text-color);
-    transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+  transform: scaleX(0);
+  transition: transform var(--transition-smooth);
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
+}
+
+.metric-card:hover::before {
+  transform: scaleX(1);
 }
 
 .metric-card h3 {
-    margin-top: 0;
-    font-size: 18px;
+  margin: 0 0 0.75rem 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.metric-card p {
-    font-size: 24px;
-    font-weight: bold;
-    margin: 0;
+.metric-card h3[data-icon="tables"]::before {
+  content: "🗂️";
 }
 
-.connected {
-    color: #28a745;
+.metric-card h3[data-icon="columns"]::before {
+  content: "📊";
 }
 
-.disconnected {
-    color: #dc3545;
+.metric-card h3[data-icon="query-time"]::before {
+  content: "⏱️";
+}
+
+.metric-card h3[data-icon="cache"]::before {
+  content: "⚡";
+}
+
+.metric-card h3[data-icon="connection"]::before {
+  content: "🔌";
+}
+
+.metric-card h3[data-icon="documents"]::before {
+  content: "📄";
+}
+
+.metric-value {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.metric-value.success {
+  color: var(--success-color);
+}
+
+.metric-value.error {
+  color: var(--error-color);
+}
+
+.metric-value.warning {
+  color: var(--warning-color);
+}
+
+.metric-description {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.connection-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.connection-status.connected {
+  background: var(--gradient-success);
+  color: white;
+}
+
+.connection-status.disconnected {
+  background: var(--error-color);
+  color: white;
+}
+
+.connection-status::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+}
+
+.empty-state::before {
+  content: "📊";
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .metrics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+  }
+  
+  .metric-card {
+    padding: 1rem;
+  }
+  
+  .metric-value {
+    font-size: 1.5rem;
+  }
 }
