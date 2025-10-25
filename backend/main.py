@@ -2,7 +2,7 @@ import logging
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import ingestion, query, schema
+from api.routes import ingestion, query, schema, metrics
 from services.query_engine import QueryEngine
 from services.document_processor import DocumentProcessor
 
@@ -18,7 +18,7 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=["http://localhost:3000"],  # Allows all origins
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
@@ -34,6 +34,11 @@ async def startup_event():
     # Initialize shared state objects
     app.state.ingestion_status = {}
     app.state.query_history = []
+    app.state.metrics = {
+        "queries_processed": 0,
+        "documents_indexed": 0,
+        "avg_response_time": 0.0,
+    }
 
     # Use an in-memory SQLite database by default for demo purposes.
     # The user can connect to a different database via the /api/connect-database endpoint.
@@ -54,6 +59,7 @@ async def startup_event():
 app.include_router(ingestion.router, prefix="/api/ingest", tags=["Data Ingestion"])
 app.include_router(query.router, prefix="/api/query", tags=["Query"])
 app.include_router(schema.router, prefix="/api/schema", tags=["Schema"])
+app.include_router(metrics.router, prefix="/api/metrics", tags=["Metrics"])
 
 @app.get("/", tags=["Root"])
 async def read_root():

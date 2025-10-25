@@ -2,6 +2,7 @@ import os
 import logging
 import asyncio
 from typing import List, Dict, Any
+import re
 
 import aiofiles
 from docx import Document
@@ -69,27 +70,28 @@ class DocumentProcessor:
 
     def dynamic_chunking(self, content: str, doc_type: str) -> List[str]:
         """
-        Splits content into meaningful chunks based on document type.
-        Aims to keep related content together.
+        Splits content into meaningful chunks based on document type and content structure.
+        Aims to keep related content together and respects sentence boundaries.
         """
         chunks = []
-        if doc_type in [".pdf", ".docx"]:
-            # Split by larger separators first, then smaller ones
-            paragraphs = content.split('\n\n')
-            current_chunk = ""
-            for para in paragraphs:
-                if len(current_chunk) + len(para) < 1000: # Combine small paragraphs
-                    current_chunk += para + "\n\n"
-                else:
-                    chunks.append(current_chunk.strip())
-                    current_chunk = para + "\n\n"
-            if current_chunk:
-                chunks.append(current_chunk.strip())
-        else: # Simple chunking for plain text
-            lines = content.split('\n')
-            chunks.extend([line for line in lines if line.strip()])
+        # Simple sentence splitting using regex
+        sentences = re.split(r'(?<=[.!?])\s+', content)
         
+        current_chunk = ""
+        for sentence in sentences:
+            # Estimate token count by character count (simple proxy)
+            if len(current_chunk) + len(sentence) < 500:  # Aim for ~500 characters per chunk
+                current_chunk += (sentence + " ")
+            else:
+                if current_chunk:
+                    chunks.append(current_chunk.strip())
+                current_chunk = sentence + " "
+        
+        if current_chunk:
+            chunks.append(current_chunk.strip())
+
         return [chunk for chunk in chunks if chunk]
+
 
     async def process_documents(self, file_paths: List[str], job_id: str, ingestion_status: Dict):
         """

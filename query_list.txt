@@ -1,0 +1,46 @@
+# Query List for Testing the NLP Query Engine
+
+# --- Basic Queries ---
+# Simple COUNT and SELECT
+"How many employees are there?"
+"List all employees."
+"Show me the staff table."
+"Who are the employees?"
+
+# --- Filter Queries ---
+# Simple WHERE clause
+"Show me all developers in the Engineering department."
+"List employees hired this year."
+"Which employees are based in the New York office?"
+"Who reports to Jane Doe?"
+
+# --- Aggregation Queries ---
+# AVG, GROUP BY
+"What is the average salary by department?"
+"Show the average compensation for each role."
+"Count of employees per division."
+
+# --- Complex Queries ---
+# TOP N, ORDER BY
+"Who are the top 5 highest paid employees?"
+"Find the top 3 longest-serving employees."
+
+# Hybrid (SQL + Document) Queries
+"Show me performance reviews for engineers hired last year."
+"Find resumes of employees with Python skills earning over 100k."
+"Which departments have the highest turnover according to exit interview documents?"
+
+# --- Document-Only Queries ---
+"What is the company policy on remote work?"
+"Find John Doe's resume."
+"Summarize the employee handbook."
+
+# --- Edge Cases ---
+# Ambiguous Query
+"Show me John."
+
+# Query with potential for no results
+"What is the salary for contractors?"
+
+# Complex Aggregation
+"What are the month-over-month hiring trends?"

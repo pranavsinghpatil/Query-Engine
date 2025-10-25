@@ -83,34 +83,58 @@ class SchemaDiscovery:
     def map_natural_language_to_schema(self, query: str, schema: dict) -> dict:
         """
         Maps terms in a natural language query to the most likely tables and columns
-        in the discovered schema using fuzzy string matching.
+        in the discovered schema using semantic similarity and fuzzy matching.
         """
         if not schema or "tables" not in schema:
             return {"error": "Invalid schema provided."}
 
-        query_terms = query.lower().split()
-        all_tables = list(schema["tables"].keys())
-        all_columns = []
-        for table in all_tables:
-            for col in schema["tables"][table]["columns"]:
-                all_columns.append(f"{table}.{col['name']}")
+        model = get_sentence_transformer_model()
+        if not model:
+            return {"error": "SentenceTransformer model not available for mapping."}
 
-        mapped_tables = process.extract(query, all_tables, scorer=fuzz.WRatio, limit=5)
-        mapped_columns = process.extract(query, all_columns, scorer=fuzz.WRatio, limit=10)
+        query_embedding = model.encode([query])[0]
 
-        # Filter matches with a score below a certain threshold
-        min_score = 75
-        best_table_match = mapped_tables[0] if mapped_tables and mapped_tables[0][1] > min_score else None
-        
-        # Find the best table match based on column matches if no direct table match is good
-        if not best_table_match and mapped_columns:
-            # Get the table from the best column match
-            best_col_table = mapped_columns[0][0].split('.')[0]
-            best_table_match = (best_col_table, 100) # Assume high confidence
+        table_scores = []
+        column_scores = []
+
+        for table_name, table_info in schema["tables"].items():
+            # Aggregate column embeddings for table representation
+            table_embeddings = [col['embedding'] for col in table_info['columns']]
+            if table_embeddings:
+                avg_table_embedding = np.mean(table_embeddings, axis=0)
+                table_similarity = fuzz.ratio(query.lower(), table_name.lower()) # Keep fuzzy for table names
+                # semantic_similarity = np.dot(query_embedding, avg_table_embedding) / (np.linalg.norm(query_embedding) * np.linalg.norm(avg_table_embedding))
+                # For simplicity, we'll just use fuzzy ratio for table names for now, 
+                # as semantic similarity for aggregated table embeddings can be complex.
+                table_scores.append((table_name, table_similarity))
+
+            for col_info in table_info['columns']:
+                col_name = col_info['name']
+                col_embedding = col_info['embedding']
+                
+                semantic_similarity = np.dot(query_embedding, col_embedding) / (np.linalg.norm(query_embedding) * np.linalg.norm(col_embedding))
+                fuzzy_similarity = fuzz.ratio(query.lower(), col_name.lower())
+                
+                # Combine semantic and fuzzy similarity (e.g., weighted average)
+                # This weighting can be tuned. Semantic is more important for conceptual match.
+                combined_similarity = (semantic_similarity * 0.7 + fuzzy_similarity * 0.3)
+                column_scores.append((f"{table_name}.{col_name}", combined_similarity))
+
+        # Sort by combined similarity in descending order
+        table_scores.sort(key=lambda x: x[1], reverse=True)
+        column_scores.sort(key=lambda x: x[1], reverse=True)
+
+        best_table_match = table_scores[0] if table_scores and table_scores[0][1] > 60 else None # Lower threshold for fuzzy table match
+        best_column_match = column_scores[0] if column_scores and column_scores[0][1] > 0.5 else None # Threshold for combined similarity
+
+        # If no strong table match, try to infer from best column match
+        if not best_table_match and best_column_match:
+            best_col_table = best_column_match[0].split('.')[0]
+            best_table_match = (best_col_table, 100) # Assume high confidence if column matches
 
         return {
             "query": query,
             "best_table_match": best_table_match[0] if best_table_match else None,
-            "mapped_tables": [m for m in mapped_tables if m[1] > min_score],
-            "mapped_columns": [m for m in mapped_columns if m[1] > min_score],
+            "mapped_tables": [m for m in table_scores if m[1] > 60],
+            "mapped_columns": [m for m in column_scores if m[1] > 0.5],
         }

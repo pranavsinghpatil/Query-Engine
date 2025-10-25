@@ -1,6 +1,7 @@
 import logging
 import time
 import asyncio
+import re
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.ext.asyncio import create_async_engine
@@ -58,26 +59,54 @@ class QueryEngine:
 
     def _generate_sql(self, mapping: dict) -> str:
         """
-        Generates a simple SQL query based on the mapped schema.
-        This is a simplified implementation for demonstration.
+        Generates a SQL query based on the mapped schema, including column selection
+        and basic WHERE clauses.
         """
-        if not mapping.get("best_table_match"):
+        best_table = mapping.get("best_table_match")
+        mapped_columns = mapping.get("mapped_columns", [])
+        
+        if not best_table:
             return None
 
-        table = mapping["best_table_match"]
+        # Select specific columns if mapped, otherwise select all
+        select_columns = []
+        if mapped_columns:
+            for col_match, score in mapped_columns:
+                table_name, col_name = col_match.split('.')
+                if table_name == best_table:
+                    select_columns.append(f'"{col_name}"')
+            if not select_columns: # Fallback if mapped columns are not for the best table
+                select_columns = ["*"]
+        else:
+            select_columns = ["*"]
         
-        # Simple implementation: select all columns from the best-matched table.
-        # A more advanced version would select specific columns based on mapped_columns.
-        sql = f'SELECT * FROM "{table}" LIMIT 20;'
+        select_clause = ", ".join(select_columns)
+        sql = f'SELECT {select_clause} FROM "{best_table}"'
         
-        # Basic WHERE clause generation (demonstration only)
-        # This part is complex; a real implementation would use more advanced NLP
-        # to understand entities and relationships.
-        if mapping.get("mapped_columns"):
-            # Example: if query was "show me employees with salary over 50000"
-            # and 'salary' is a mapped column, one could try to parse 'over 50000'.
-            # This is beyond the scope of this simplified generator.
-            pass
+        # Basic WHERE clause generation (example for demonstration - needs much more NLP processing)
+        where_clauses = []
+        query_lower = mapping["query"].lower()
+
+        # Example: look for simple equality phrases like 'X is Y' or 'X = Y'
+        # This is a very simplistic approach and needs significant NLP for real-world use
+        if best_table == "employees": # Example for a specific table
+            if "department" in query_lower:
+                match = re.search(r'department (is|=)?\s*(\w+)', query_lower)
+                if match:
+                    department_name = match.group(2).strip()
+                    where_clauses.append(f'"department" = \'{department_name.capitalize()}\'') # Assuming capitalized department names
+
+            if "salary" in query_lower:
+                match = re.search(r'salary (>|<|=)?\s*(\d+)', query_lower)
+                if match:
+                    operator = match.group(1) or '='
+                    salary_value = match.group(2).strip()
+                    where_clauses.append(f'"salary" {operator} {salary_value}')
+
+        if where_clauses:
+            sql += " WHERE " + " AND ".join(where_clauses)
+
+        sql += " LIMIT 20;" # Always limit results for safety
 
         return sql
 

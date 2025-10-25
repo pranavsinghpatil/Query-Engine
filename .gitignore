@@ -34,7 +34,9 @@ yarn-error.log*
 .idea/
 *.sublime-project
 *.sublime-workspace
-
+submissions_video.mp4
+guide.md
+Frontend_Instructions.md
 # OS generated files
 .DS_Store
 Thumbs.db
